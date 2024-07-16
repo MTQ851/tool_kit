@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="UTF-8">
+    <title>手机号归属地查询</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f1f1f1;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-container {
+            margin-top: 20px;
+        }
+
+        .form-container input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .form-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-container button:hover {
+            background-color: #45a049;
+        }
+
+        .result-container {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .result-container p {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .error-message {
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        .area-code {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .city-code {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>手机号归属地查询</h1>
+        <div class="form-container">
+            <input type="text" id="phoneInput" placeholder="请输入手机号" />
+            <button onclick="queryPhone()">查询</button>
+        </div>
+        <div id="resultContainer" class="result-container"></div>
+    </div>
+
+    <script>
+        function queryPhone() {
+            var phone = document.getElementById("phoneInput").value;
+            var url = "https://api.kertennet.com/tool/phoneAttribution?phone=" + phone;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    var resultContainer = document.getElementById("resultContainer");
+                    resultContainer.innerHTML = "";
+                    if (data.code === 200) {
+                        var phoneInfo = data.data;
+                        var areaCode = phoneInfo.areaCode;
+                        var cityCode = phoneInfo.cityCode;
+                        var address = phoneInfo.address;
+                        var province = phoneInfo.province;
+                        var city = phoneInfo.city;
+                        var isp = phoneInfo.isp;
+
+                        var areaCodeInfo = document.createElement("p");
+                        areaCodeInfo.innerText = "区号：" + areaCode;
+                        areaCodeInfo.classList.add("area-code");
+                        resultContainer.appendChild(areaCodeInfo);
+
+                        var cityCodeInfo = document.createElement("p");
+                        cityCodeInfo.innerText = "城市区号：" + cityCode;
+                        cityCodeInfo.classList.add("city-code");
+                        resultContainer.appendChild(cityCodeInfo);
+
+                        var addressInfo = document.createElement("p");
+                        addressInfo.innerText = "地址：" + address;
+                        resultContainer.appendChild(addressInfo);
+
+                        var provinceInfo = document.createElement("p");
+                        provinceInfo.innerText = "省份：" + province;
+                        resultContainer.appendChild(provinceInfo);
+
+                        var cityInfo = document.createElement("p");
+                        cityInfo.innerText = "城市：" + city;
+                        resultContainer.appendChild(cityInfo);
+
+                        var ispInfo = document.createElement("p");
+                        ispInfo.innerText = "运营商：" + isp;
+                        resultContainer.appendChild(ispInfo);
+                    } else {
+                        var errorMessage = document.createElement("p");
+                        errorMessage.innerText = "查询失败：" + data.errorMessage;
+                        errorMessage.classList.add("error-message");
+                        resultContainer.appendChild(errorMessage);
+                    }
+                })
+                .catch(error => {
+                    var resultContainer = document.getElementById("resultContainer");
+                    resultContainer.innerHTML = "";
+                    var errorMessage = document.createElement("p");
+                    errorMessage.innerText = "查询失败：" + error.message;
+                    errorMessage.classList.add("error-message");
+                    resultContainer.appendChild(errorMessage);
+                });
+        }
+    </script>
+</body>
+</html>

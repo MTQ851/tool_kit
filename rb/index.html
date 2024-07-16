@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+       <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* CSS样式可以根据您的需求进行自定义 */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>垃圾分类查询</h1>
+        <input type="text" id="inputName" placeholder="请输入垃圾名称">
+        <button onclick="search()">查询</button>
+
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>垃圾名称</th>
+                    <th>所属分类名称</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function search() {
+            var inputName = $('#inputName').val();
+            if (inputName.trim() === '') {
+                alert('请输入垃圾名称');
+                return;
+            }
+
+            $.get('https://api.kertennet.com/live/wasteSorting?name=' + inputName, function(data) {
+                if (data.code === 200) {
+                    var result = data.data;
+                    var tableBody = $('#resultTable tbody');
+                    tableBody.empty();
+
+                    var row = $('<tr></tr>');
+                    row.append('<td>' + result.name + '</td>');
+                    row.append('<td>' + result.cname + '</td>');
+                    tableBody.append(row);
+
+                    if (result.similar && result.similar.length > 0) {
+                        for (var i = 0; i < result.similar.length; i++) {
+                            var similar = result.similar[i];
+                            row = $('<tr></tr>');
+                            row.append('<td>' + similar.name + '</td>');
+                            row.append('<td>' + similar.cname + '</td>');
+                            tableBody.append(row);
+                        }
+                    }
+                } else {
+                    alert('查询失败');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

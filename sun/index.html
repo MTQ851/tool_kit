@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunrise Sunset Time</title>
+    <!-- Updated styles for a more aesthetic look -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f7f7f7;
+        }
+        .container {
+            background-color: #fff;
+            margin: auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+        }
+        h1 {
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f1f1f1;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sunrise Sunset Time</h1>
+        <input type="text" id="latitudeInput" placeholder="Latitude">
+        <input type="text" id="longitudeInput" placeholder="Longitude">
+        <input type="text" id="timezoneInput" placeholder="Timezone (default: Asia/Shanghai)">
+        <button onclick="getSunriseSunset()">Get Time</button>
+
+        <table id="timeTable">
+            <tr>
+                <th>Date</th>
+                <th>Sunrise</th>
+                <th>Sunset</th>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        // 获取用户定位信息
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            document.getElementById('latitudeInput').value = latitude;
+            document.getElementById('longitudeInput').value = longitude;
+        });
+
+        function getSunriseSunset() {
+            var latitude = document.getElementById("latitudeInput").value;
+            var longitude = document.getElementById("longitudeInput").value;
+            var timezone = document.getElementById("timezoneInput").value || "Asia/Shanghai";
+
+            // Replace the API URL with your actual API endpoint
+            var apiUrl = "https://api.kertennet.com/weather/sunriseSunset?lat=" + latitude + "&lng=" + longitude + "&timezone=" + timezone;
+
+            // Clear the table before making a new request
+            var table = document.getElementById("timeTable");
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        var sunrise = data.data.sunrise;
+                        var sunset = data.data.sunset;
+
+                        var row = table.insertRow(-1);
+                        var dateCell = row.insertCell(0);
+                        var sunriseCell = row.insertCell(1);
+                        var sunsetCell = row.insertCell(2);
+
+                        var today = new Date().toLocaleDateString();
+                        dateCell.innerHTML = today;
+                        sunriseCell.innerHTML = sunrise;
+                        sunsetCell.innerHTML = sunset;
+                    } else {
+                        alert("Failed to get sunrise and sunset time. Please try again.");
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    alert("An error occurred while fetching data. Please try again.");
+                });
+        }
+    </script>
+</body>
+</html>

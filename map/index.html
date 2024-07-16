@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>可腾经纬度查询位置信息</title>
+    <!-- 引入Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.1.2/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .transition {
+            transition: all 0.3s ease-in-out;
+        }
+        /* 简单的阴影到浓重阴影的过渡效果 */
+        .shadow-transition:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-xl">
+        <h1 class="text-xl font-semibold mb-4 text-center">查询位置信息</h1>
+        <div class="mb-4">
+            <label class="block font-medium text-gray-700">选择地图:</label>
+            <select id="map-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                <option value="gd">高德</option>
+                <option value="bd">百度</option>
+                <option value="tx">腾讯</option>
+            </select>
+        </div>
+        <div class="mb-4">
+            <label class="block font-medium text-gray-700">经度:</label>
+            <input type="text" id="longitude" placeholder="输入经度" class="transition mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+        </div>
+        <div class="mb-4">
+            <label class="block font-medium text-gray-700">纬度:</label>
+            <input type="text" id="latitude" placeholder="输入纬度" class="transition mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+        </div>
+        <button id="query-btn" class="transition w-full bg-indigo-500 text-white font-semibold py-2 px-4 rounded hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-transition">
+            查询
+        </button>
+        <div class="results mt-6">
+            <!-- 查询结果将被插入这里 -->
+        </div>
+    </div>
+
+<script>
+  // 获取用户定位信息
+    navigator.geolocation.getCurrentPosition(function(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    document.getElementById('latitude').value = latitude;
+    document.getElementById('longitude').value = longitude;
+    
+    // 输出到控制台
+    console.log('成功获取位置信息:');
+    console.log('经度:', longitude);
+    console.log('纬度:', latitude);
+}, function(error) {
+    // 获取位置信息失败时的错误处理
+    console.error('获取位置信息失败:', error.message);
+});
+
+
+    document.getElementById('query-btn').addEventListener('click', function() {
+        const mapType = document.getElementById('map-select').value;
+        const longitude = document.getElementById('longitude').value;
+        const latitude = document.getElementById('latitude').value;
+    
+        fetch(`https://api.kertennet.com/geography/locationInfo_v2?lng=${longitude}&lat=${latitude}&map=${mapType}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    const info = data.data;
+                    document.querySelector('.results').innerHTML = `
+                        <div class="p-4 mt-4 rounded border">
+                            <h2 class="font-semibold text-lg mb-2">查询结果</h2>
+                            <p><strong>地址:</strong> ${info.address}</p>
+                            <p><strong>省:</strong> ${info.province}</p>
+                            <p><strong>市:</strong> ${info.city}</p>
+                            <p><strong>区:</strong> ${info.district}</p>
+                            <p><strong>街:</strong> ${info.street}</p>
+                            <p><strong>街道号码:</strong> ${info.streetNumber}</p>
+                        </div>
+                    `;
+                } else {
+                    alert('未能查询到位置信息，请确保经纬度正确并再次尝试。');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
+</body>
+</html>
