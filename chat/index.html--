@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 24px;
+            color: #333333;
+            margin-top: 0;
+        }
+        
+        p {
+            font-size: 16px;
+            color: #666666;
+            margin: 10px 0;
+        }
+        
+        .wechat {
+            font-weight: bold;
+        }
+        
+        .contact-info {
+            margin-top: 20px;
+            border-top: 1px solid #cccccc;
+            padding-top: 10px;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            p {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>通知</h1>
+        <p>由于 AI 大量被攻击使用，现将收费使用。</p>
+        <p>详情请联系 QQ：<span class="wechat">1564798181</span></p>
+        <div class="contact-info">
+            <p>联系方式：</p>
+            <p>Email: 1564798181@qq.com</p>
+            <p>微信: MTQ851</p>
+        </div>
+    </div>
+</body>
+</html>

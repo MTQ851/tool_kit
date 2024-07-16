@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="UTF-8">
+    <title>银行卡归属地查询</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f1f1f1;
+        }
+        
+        .container {
+            width: 100%;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .form-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .form-container input[type="text"] {
+            padding: 10px;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        
+        .form-container button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .error-message {
+            color: #ff0000;
+            text-align: center;
+        }
+        
+        table {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>银行卡归属地查询</h1>
+        <div class="form-container">
+            <form id="bankCardForm">
+                <input type="text" id="cardNo" name="cardNo" placeholder="请输入银行卡号">
+                <button type="submit">查询</button>
+            </form>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("bankCardForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            var cardNo = document.getElementById("cardNo").value;
+            fetch("https://api.kertennet.com/tool/bankCardMes?cardNo=" + cardNo)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        var resultDiv = document.getElementById("result");
+                        resultDiv.innerHTML = `
+                            <table>
+                                <tr>
+                                    <th>卡号</th>
+                                    <th>银行卡种类</th>
+                                    <th>银行卡归属地</th>
+                                    <th>官方网址</th>
+                                    <th>银行电话</th>
+                                </tr>
+                                <tr>
+                                    <td>${data.data.cardNo}</td>
+                                    <td>${data.data.kind}</td>
+                                    <td>${data.data.attribution}</td>
+                                    <td>${data.data.officialWebsite}</td>
+                                    <td>${data.data.bankServicesPhone}</td>
+                                </tr>
+                            </table>
+                        `;
+                    } else {
+                        document.getElementById("result").innerHTML = `<p class="error-message">查询失败</p>`;
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    document.getElementById("result").innerHTML = `<p class="error-message">查询失败</p>`;
+                });
+        });
+    </script>
+</body>
+</html>

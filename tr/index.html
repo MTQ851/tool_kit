@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+     <link rel="icon" href="https://kertennet.com/uploads/20221124/7c5e77713b246560663666f18c6029ed.png?v=1710224227" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>可腾翻译</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f2f2f2;
+        }
+
+        .translation-form {
+            margin-bottom: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+        }
+
+        select,
+        button {
+            margin-right: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        select {
+            width: 150px;
+        }
+
+        button {
+            width: 80px;
+        }
+
+        .translation-result {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 600px) {
+            /* 在屏幕宽度小于600px时应用的样式 */
+            body {
+                margin: 10px;
+                padding: 10px;
+            }
+
+            .translation-form {
+                padding: 10px;
+            }
+
+            textarea {
+                padding: 5px;
+            }
+
+            select,
+            button {
+                padding: 5px;
+            }
+
+            .translation-result {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="translation-form">
+        <h2>在线翻译</h2>
+        <textarea id="text-to-translate" placeholder="请输入要翻译的文字..."></textarea>
+        <select id="language-selector">
+            <option value="en">英文</option>
+            <option value="zh">中文</option>
+            <option value="jp">日语</option>
+            <option value="kor">韩语</option>
+            <option value="ru">俄语</option>
+            <option value="fra">法语</option>
+            <option value="zht">繁体中文</option>
+        </select>
+        <button onclick="translateText()">翻译</button>
+    </div>
+    <div class="translation-result">
+        <h3>翻译结果:</h3>
+        <div id="translated-text"></div>
+    </div>
+
+    <script>
+        function translateText() {
+            const text = document.getElementById('text-to-translate').value;
+            const language = document.getElementById('language-selector').value;
+            const apiUrl = `https://api.kertennet.com/live/translate?text=${encodeURIComponent(text)}&to=${language}`;
+            fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'appCode': 'PR591z71aj3c753K79iav73L5331SM97'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        document.getElementById('translated-text').innerText = data.data.target;
+                    } else {
+                        document.getElementById('translated-text').innerText = '翻译失败，请重试。';
+                    }
+                })
+                .catch(error => {
+                    console.error('翻译出错:', error);
+                    document.getElementById('translated-text').innerText = '翻译错误，请检查您的网络连接或稍后再试。';
+                });
+        }
+    </script>
+</body>
+
+</html>

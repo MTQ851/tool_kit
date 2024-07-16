@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>BMI Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+
+        td:first-child {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BMI Calculator</h1>
+        <form id="bmiForm">
+            <label for="sex">性别：</label>
+            <select id="sex" name="sex">
+                <option value="1">男</option>
+                <option value="2">女</option>
+            </select>
+
+            <label for="height">身高（cm）：</label>
+            <input type="text" id="height" name="height">
+
+            <label for="weight">体重（kg）：</label>
+            <input type="text" id="weight" name="weight">
+
+            <button type="submit">计算</button>
+        </form>
+
+        <table id="resultTable" style="display: none;">
+            <tr>
+                <th>项目</th>
+                <th>数值</th>
+            </tr>
+            <tr>
+                <td>身高</td>
+                <td id="heightResult"></td>
+            </tr>
+            <tr>
+                <td>体重</td>
+                <td id="weightResult"></td>
+            </tr>
+            <tr>
+                <td>BMI数值</td>
+                <td id="bmiResult"></td>
+            </tr>
+            <tr>
+                <td>BMI数值所属类型</td>
+                <td id="typeResult"></td>
+            </tr>
+            <tr>
+                <td>标准体重</td>
+                <td id="standardWeightResult"></td>
+            </tr>
+            <tr>
+                <td>相关疾病发病危险性</td>
+                <td id="riskResult"></td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        const form = document.getElementById("bmiForm");
+        const resultTable = document.getElementById("resultTable");
+        const heightResult = document.getElementById("heightResult");
+        const weightResult = document.getElementById("weightResult");
+        const bmiResult = document.getElementById("bmiResult");
+        const typeResult = document.getElementById("typeResult");
+        const standardWeightResult = document.getElementById("standardWeightResult");
+        const riskResult = document.getElementById("riskResult");
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const sex = document.getElementById("sex").value;
+            const height = document.getElementById("height").value;
+            const weight = document.getElementById("weight").value;
+
+            fetch(`https://api.kertennet.com/live/BMICalculate?height=${height}&weight=${weight}&sex=${sex}`)
+                .then(response => response.json())
+                .then(data => {
+                    heightResult.textContent = data.data.height;
+                    weightResult.textContent = data.data.weight;
+                    bmiResult.textContent = data.data.BMI;
+                    typeResult.textContent = data.data.type;
+                    standardWeightResult.textContent = data.data.standardWeight;
+                    riskResult.textContent = data.data.risk;
+                    resultTable.style.display = "table";
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        });
+    </script>
+</body>
+</html>

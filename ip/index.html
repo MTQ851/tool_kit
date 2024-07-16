@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP地址查询</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .input-container input {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 18px; /* 设置字体大小为18px */
+        }
+
+        .input-container button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+
+        td.ip {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>IP地址查询</h1>
+    <div class="card">
+        <div class="input-container">
+            <input type="text" id="ipInput" placeholder="请输入IP地址">
+            <button onclick="queryIp()">查询</button>
+        </div>
+        <table id="ipTable" style="display: none;">
+            <tr>
+                <th>IP地址</th>
+                <th>国家</th>
+                <th>省份</th>
+                <th>城市</th>
+                <th>区域</th>
+                <th>运营商</th>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        // 获取用户IP地址
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                // 将获取到的IP地址放入输入框
+                document.getElementById('ipInput').value = data.ip;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+        function queryIp() {
+            var ip = document.getElementById('ipInput').value;
+            var url = 'https://api.kertennet.com/tool/queryIpContent?ip=' + ip;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        clearIpData();
+                        displayIpData(data.data);
+                    } else {
+                        alert('查询失败');
+                    }
+                })
+                .catch(error => {
+                    alert('查询失败');
+                    console.error(error);
+                });
+        }
+
+        function clearIpData() {
+            var table = document.getElementById('ipTable');
+            var rowCount = table.rows.length;
+
+            for (var i = rowCount - 1; i > 0; i--) {
+                table.deleteRow(i);
+            }
+        }
+
+        function displayIpData(ipData) {
+            var table = document.getElementById('ipTable');
+            table.style.display = 'table';
+
+            var row = table.insertRow(-1);
+            var ipCell = row.insertCell(0);
+            ipCell.textContent = ipData.ip;
+            ipCell.classList.add('ip');
+
+            var countryCell = row.insertCell(1);
+            countryCell.textContent = ipData.country;
+
+            var provinceCell = row.insertCell(2);
+            provinceCell.textContent = ipData.province;
+
+            var cityCell = row.insertCell(3);
+            cityCell.textContent = ipData.city;
+
+            var areaCell = row.insertCell(4);
+            areaCell.textContent = ipData.area;
+
+            var ispCell = row.insertCell(5);
+            ispCell.textContent = ipData.isp;
+        }
+    </script>
+</body>
+</html>

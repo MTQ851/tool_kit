@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>车牌号归属地查询</title>
+    <style>
+        body, html {
+            font-family: Arial, sans-serif;
+            padding: 0;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #dddddd;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>车牌号归属地查询</h1>
+        <input type="text" id="licencePlateInput" placeholder="请输入车牌号，如：京A12345">
+        <button onclick="fetchLicencePlateInfo()">查询</button>
+        <table id="resultTable" class="hidden">
+            <tr>
+                <th>省</th>
+                <th>市</th>
+                <th>类型</th>
+                <th>车牌号</th>
+            </tr>
+            <tr>
+                <td id="provinceName"></td>
+                <td id="cityName"></td>
+                <td id="user"></td>
+                <td id="num"></td>
+            </tr>
+        </table>
+    </div>
+    <script>
+        function fetchLicencePlateInfo() {
+            const input = document.getElementById('licencePlateInput').value;
+            const url = `https://api.kertennet.com/live/licencePlate?num=${input}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        document.getElementById('provinceName').textContent = data.data.provinceName;
+                        document.getElementById('cityName').textContent = data.data.cityName;
+                        document.getElementById('user').textContent = data.data.user;
+                        document.getElementById('num').textContent = data.data.num;
+                        document.getElementById('resultTable').classList.remove('hidden');
+                    } else {
+                        alert('查询失败，请检查输入的车牌号码是否正确。');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('查询失败，请检查网络连接或稍后再试。');
+                });
+        }
+    </script>
+</body>
+</html>

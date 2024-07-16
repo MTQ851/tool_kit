@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .input-container input {
+            width: 100%;
+            max-width: 300px;
+            height: 40px;
+            padding: 5px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .input-container button {
+            width: 100%;
+            max-width: 300px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #qrcode {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            max-width: 100%;
+        }
+
+        #downloadButton {
+            margin-top: 20px;
+        }
+
+        #downloadButton a {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+
+        @media only screen and (max-width: 480px) {
+            .input-container input {
+                max-width: 100%;
+            }
+
+            .input-container button {
+                max-width: 100%;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0"></script>
+    <script>
+        function generateQRCode() {
+            var url = document.getElementById("urlInput").value;
+            var apiUrl = "https://api.kertennet.com/tool/generatorCode_v2?url=" + encodeURIComponent(url);
+
+            $.get(apiUrl, function(data) {
+                if (data.code === 200) {
+                    var qrCodeUrl = data.data;
+                    var qrCodeImg = document.createElement("img");
+                    qrCodeImg.src = qrCodeUrl;
+                    qrCodeImg.alt = "QR Code";
+                    qrCodeImg.style.maxWidth = "100%";
+                    document.getElementById("qrcode").innerHTML = "";
+                    document.getElementById("qrcode").appendChild(qrCodeImg);
+                    document.getElementById("downloadLink").href = qrCodeUrl;
+                    document.getElementById("downloadButton").style.display = "block";
+                } else {
+                    alert("Failed to generate QR code: " + data.message);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>QR Code Generator</h1>
+        <div class="input-container">
+            <input type="text" id="urlInput" placeholder="Enter the URL">
+            <button onclick="generateQRCode()">Generate QR Code</button>
+        </div>
+        <div id="qrcode"></div>
+        <div id="downloadButton">
+            <a id="downloadLink" href="#" target="_blank" download="qrcode.png">Download QR Code</a>
+        </div>
+    </div>
+</body>
+</html>
